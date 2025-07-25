@@ -3,10 +3,11 @@ using HarmonyLib;
 
 namespace AgriCore.Patches;
 
-[HarmonyPatch(typeof(Localizer), nameof(Localizer.Localize), typeof(string))]
-internal static class LocalizerLocalize
+[HarmonyPatch(typeof(Localizer))]
+internal static class Localizer_Patches
 {
-    private static bool Prefix(string key, ref string __result)
+    [HarmonyPatch(nameof(Localizer.Localize), typeof(string)), HarmonyPrefix]
+    private static bool Localize_Prefix(string key, ref string __result)
     {
         var value = LocalizerHelper.GetText(Localizer.Lang, key);
 
