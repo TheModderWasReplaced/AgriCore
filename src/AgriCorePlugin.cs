@@ -1,5 +1,4 @@
 ﻿using AgriCore.API.Attributes;
-using AgriCore.Extensions;
 using AgriCore.Helpers;
 using AgriCore.Patches;
 using BepInEx;
@@ -38,14 +37,20 @@ public class AgriCorePlugin : BaseUnityPlugin
     private void Patch()
     {
         _harmony = new Harmony(Constants.GUID);
-        
-        _harmony.PatchAll();
-        _harmony.TranspileLambda(
-            typeof(CodeUtilities),
-            nameof(CodeUtilities.SyntaxColor2),
-            typeof(CodeUtilitiesSyntaxColor2),
-            nameof(CodeUtilitiesSyntaxColor2.ParseGroupToColor)
+
+        _harmony.PatchAll(typeof(CodeUtilities_Patches));
+        _harmony.Patch(
+            original: ReflectionHelper.GetLambdaMethod(
+                typeof(CodeUtilities),
+                nameof(CodeUtilities.SyntaxColor2)
+            ),
+            transpiler: new HarmonyMethod(
+                typeof(CodeUtilities_Patches),
+                nameof(CodeUtilities_Patches.ParseGroupToColor)
+            )
         );
+
+        _harmony.PatchAll(typeof(Localizer_Patches));
     }
 
     private void Unpatch()
