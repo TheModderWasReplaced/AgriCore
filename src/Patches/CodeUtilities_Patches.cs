@@ -1,18 +1,16 @@
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
-using AgriCore.Extensions;
 using AgriCore.Helpers;
 using HarmonyLib;
 
 namespace AgriCore.Patches;
 
 [HarmonyPatch(typeof(CodeUtilities))]
-internal static class CodeUtilitiesSyntaxColor2
+internal static class CodeUtilities_Patches
 {
-    [HarmonyPatch(nameof(CodeUtilities.SyntaxColor2), typeof(string), typeof(string), typeof(int))]
-    [HarmonyTranspiler]
-    private static IEnumerable<CodeInstruction> AddCustomPatterns(IEnumerable<CodeInstruction> instructions)
+    [HarmonyPatch(nameof(CodeUtilities.SyntaxColor2), typeof(string), typeof(string), typeof(int)), HarmonyTranspiler]
+    private static IEnumerable<CodeInstruction> SyntaxColor2_HarmonyTranspiler(IEnumerable<CodeInstruction> instructions)
     {
         var code = new List<CodeInstruction>(instructions);
         
@@ -79,10 +77,10 @@ internal static class CodeUtilitiesSyntaxColor2
             Log.Warning($"Failed to transpile the code at '{nameof(CodeUtilities.SyntaxColor2)}'.");
             return code;
         }
-        
+
         var resultLocal = il.DeclareLocal(typeof(string));
         var continueLabel = il.DefineLabel();
-        var matchField = typeof(CodeUtilities).GetLocalField("m");
+        var matchField = ReflectionHelper.GetLocalField(typeof(CodeUtilities), "m");
 
         var injected = new CodeInstruction[]
         {
@@ -96,7 +94,7 @@ internal static class CodeUtilitiesSyntaxColor2
             new(OpCodes.Ret)
         };
 
-        injected[0].SwapLabels(code[insertionIndex]);
+        (injected[0].labels, code[insertionIndex].labels) = (code[insertionIndex].labels, injected[0].labels);
         code[insertionIndex].labels.Add(continueLabel);
 
         code.InsertRange(insertionIndex, injected);
