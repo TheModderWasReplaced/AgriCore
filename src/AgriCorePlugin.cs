@@ -13,14 +13,9 @@ namespace AgriCore;
 [FarmInfo("WarperSan", "https://github.com/TheModderWasReplaced/AgriCore")]
 public class AgriCorePlugin : BaseUnityPlugin
 {
-    /// <summary>
-    /// Instance of this plugin
-    /// </summary>
-    public static AgriCorePlugin Instance { get; private set; } = null!;
-
     private void Awake()
     {
-        Instance = this;
+        Log.SetLogger(Logger);
         
         Patch();
         

@@ -8,11 +8,16 @@ namespace AgriCore.Helpers;
 /// </summary>
 internal static class Log
 {
+    private static ManualLogSource? _logger;
+
+    /// <summary>
+    /// Assigns the current logger to the given logger
+    /// </summary>
+    public static void SetLogger(ManualLogSource? logger) => _logger = logger;
+
     private static void LogSelf(object?[] data, LogLevel level)
     {
-        var logger = AgriCorePlugin.Instance.Logger;
-        
-        if (logger == null)
+        if (_logger == null)
             return;
 
         var message = new StringBuilder();
@@ -27,7 +32,7 @@ internal static class Log
                 message.Append(" ");
         }
         
-        logger.Log(level, message.ToString());
+        _logger.Log(level, message.ToString());
     }
 
     /// <inheritdoc cref="BepInEx.Logging.ManualLogSource.LogDebug"/>

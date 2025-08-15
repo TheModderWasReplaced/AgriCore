@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net47</TargetFramework>
+        <TargetFramework>net472</TargetFramework>
         <LangVersion>latest</LangVersion>
         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
         <RunPostBuildEvent>Always</RunPostBuildEvent>
@@ -22,11 +22,14 @@
         <Product>AgriCore</Product>
     </PropertyGroup>
 
-    <!-- PACKAGES -->
-    <ItemGroup>
-        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" />
-    </ItemGroup>
-    
+    <!-- Set NuGet Sources -->
+    <PropertyGroup>
+        <RestoreAdditionalProjectSources>
+            https://api.nuget.org/v3/index.json;
+            https://nuget.bepinex.dev/v3/index.json
+        </RestoreAdditionalProjectSources>
+    </PropertyGroup>
+
     <!-- LIBRARIES -->
     <ItemGroup>
         <!-- GAME -->
@@ -34,15 +37,13 @@
         <Reference Include="$(ManagedPath)/Utils.dll" Publicize="true" />
 
         <!-- BEPINEX -->
-        <Reference Include="$(BepInExPath)/core/BepInEx.dll" Publicize="true" />
-        <Reference Include="$(BepInExPath)/core/0Harmony.dll" />
+        <PackageReference Include="BepInEx.Core" Version="5.*" PrivateAssets="all" />
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" />
         
         <!-- UNITY -->
-        <Reference Include="$(ManagedPath)/Unity*.dll" />
-        
-        <!-- SYSTEM -->
-        <Reference Include="$(ManagedPath)/System*.dll" />
-        <Reference Include="$(ManagedPath)/mscorlib.dll" />
+        <PackageReference Include="UnityEngine.Modules" Version="2020.3.1" IncludeAssets="compile" PrivateAssets="all" />
+        <PackageReference Include="Unity3D.UnityEngine.UI" Version="2018.3.5.1" IncludeAssets="compile" PrivateAssets="all" />
+        <Reference Include="$(ManagedPath)/Unity.TextMeshPro.dll" />
     </ItemGroup>
 
     <!-- FILE TYPES -->

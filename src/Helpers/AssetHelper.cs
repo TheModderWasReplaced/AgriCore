@@ -55,10 +55,10 @@ public static class AssetHelper
         // If no content found, skip
         if (bytes.Length == 0)
             return null;
-        
+
         // Create texture
         var t = new Texture2D(1, 1);
-        t.LoadImage(bytes);
+        //t.LoadImage(bytes);
 
         return t;
     }
