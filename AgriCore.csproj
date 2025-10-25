@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net472</TargetFramework>
+        <TargetFramework>net46</TargetFramework>
         <LangVersion>latest</LangVersion>
         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
         <RunPostBuildEvent>Always</RunPostBuildEvent>
         <Nullable>enable</Nullable>
         <RootNamespace>AgriCore</RootNamespace>
         <DocumentationFile>bin\$(Configuration)\${PackageId}.xml</DocumentationFile>
-    
+
         <!-- PATHS -->
         <SteamPath>/home/warpersan/.steam/steam</SteamPath>
         <GamePath>$(SteamPath)/steamapps/common/The Farmer Was Replaced</GamePath>
@@ -28,22 +28,25 @@
             https://api.nuget.org/v3/index.json;
             https://nuget.bepinex.dev/v3/index.json
         </RestoreAdditionalProjectSources>
+
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>embedded</DebugType>
     </PropertyGroup>
 
     <!-- LIBRARIES -->
     <ItemGroup>
         <!-- GAME -->
-        <Reference Include="$(ManagedPath)/Core.dll" Publicize="true" />
-        <Reference Include="$(ManagedPath)/Utils.dll" Publicize="true" />
+        <Reference Include="$(ManagedPath)/Core.dll" Publicize="true"/>
+        <Reference Include="$(ManagedPath)/Utils.dll" Publicize="true"/>
 
         <!-- BEPINEX -->
-        <PackageReference Include="BepInEx.Core" Version="5.*" PrivateAssets="all" />
-        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" />
-        
+        <PackageReference Include="BepInEx.Core" Version="5.*" PrivateAssets="all"/>
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all"/>
+
         <!-- UNITY -->
-        <PackageReference Include="UnityEngine.Modules" Version="2020.3.1" IncludeAssets="compile" PrivateAssets="all" />
-        <PackageReference Include="Unity3D.UnityEngine.UI" Version="2018.3.5.1" IncludeAssets="compile" PrivateAssets="all" />
-        <Reference Include="$(ManagedPath)/Unity.TextMeshPro.dll" />
+        <PackageReference Include="UnityEngine.Modules" Version="2020.3.1" IncludeAssets="compile" PrivateAssets="all"/>
+        <PackageReference Include="Unity3D.UnityEngine.UI" Version="2018.3.5.1" IncludeAssets="compile" PrivateAssets="all"/>
+        <Reference Include="$(ManagedPath)/Unity.TextMeshPro.dll"/>
     </ItemGroup>
 
     <!-- FILE TYPES -->
@@ -51,15 +54,16 @@
         <EmbeddedResource Include="Resources\**\*"/>
         <Compile Include="src\**\*.cs"/>
     </ItemGroup>
-    
+
+
     <!-- BUILD EVENTS -->
     <Target Name="DLL" AfterTargets="Build" Condition="Exists('$(TargetDir)$(TargetName).dll')">
         <Message Text="Copying $(ProjectName).dll to $(OutputPath)..." Importance="normal"/>
-        <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFiles="$(PluginsPath)/$(TargetName).dll" />
+        <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFiles="$(PluginsPath)/$(TargetName).dll"/>
     </Target>
 
     <Target Name="XML" AfterTargets="Build" Condition="Exists('$(TargetDir)$(TargetName).xml')">
         <Message Text="Copying $(ProjectName).xml to $(OutputPath)..." Importance="normal"/>
-        <Copy SourceFiles="$(TargetDir)$(TargetName).xml" DestinationFiles="$(PluginsPath)/$(TargetName).xml" />
+        <Copy SourceFiles="$(TargetDir)$(TargetName).xml" DestinationFiles="$(PluginsPath)/$(TargetName).xml"/>
     </Target>
 </Project>

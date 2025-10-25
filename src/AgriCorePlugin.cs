@@ -7,55 +7,60 @@ using HarmonyLib;
 namespace AgriCore;
 
 /// <summary>
-/// Plugin made to help other plugins 
+///     Plugin made to help other plugins
 /// </summary>
 [BepInPlugin(Constants.GUID, "AgriCore", "1.0.0.0")]
 [FarmInfo("WarperSan", "https://github.com/TheModderWasReplaced/AgriCore")]
 public class AgriCorePlugin : BaseUnityPlugin
 {
-    private void Awake()
-    {
-        Log.SetLogger(Logger);
-        
-        Patch();
-        
-        LocalizerHelper.Add(ErrorHelper.WRONG_ARGUMENT_COUNT_ERROR, "{0} takes {1} arguments.\n\nExpected:\n{2}\n\nReceived:\n{3}");
-        LocalizerHelper.Add(ErrorHelper.WRONG_ARGUMENTS_ERROR, "{0} expected '{1}' as the #{2} argument.\n\nInstead, it got {3}.");
-        
-        ModHelperFunctions.LoadAll();
-    }
+	private void Awake()
+	{
+		Log.SetLogger(Logger);
 
-    #region Harmony
+		Patch();
 
-    private Harmony? _harmony;
+		LocalizerHelper.Add(
+			ErrorHelper.WRONG_ARGUMENT_COUNT_ERROR, "{0} takes {1} arguments.\n\nExpected:\n{2}\n\nReceived:\n{3}"
+		);
+		LocalizerHelper.Add(
+			ErrorHelper.WRONG_ARGUMENTS_ERROR, "{0} expected '{1}' as the #{2} argument.\n\nInstead, it got {3}."
+		);
 
-    private void Patch()
-    {
-        _harmony = new Harmony(Constants.GUID);
+		ModHelperFunctions.LoadAll();
 
-        _harmony.PatchAll(typeof(CodeUtilities_Patches));
-        _harmony.Patch(
-            original: ReflectionHelper.GetLambdaMethod(
-                typeof(CodeUtilities),
-                nameof(CodeUtilities.SyntaxColor2)
-            ),
-            transpiler: new HarmonyMethod(
-                typeof(CodeUtilities_Patches),
-                nameof(CodeUtilities_Patches.ParseGroupToColor)
-            )
-        );
+		Log.Info(nameof(AgriCorePlugin) + " loaded!");
+	}
 
-        _harmony.PatchAll(typeof(Localizer_Patches));
-    }
+	#region Harmony
 
-    private void Unpatch()
-    {
-        if (_harmony == null)
-            return;
-        
-        _harmony.UnpatchSelf();
-        _harmony = null;
-    }
+	private Harmony? _harmony;
 
-    #endregion
+	private void Patch()
+	{
+		_harmony = new Harmony(Constants.GUID);
+
+		_harmony.PatchAll(typeof(CodeUtilities_Patches));
+		_harmony.Patch(
+			ReflectionHelper.GetLambdaMethod(
+				typeof(CodeUtilities),
+				nameof(CodeUtilities.SyntaxColor2)
+			),
+			transpiler: new HarmonyMethod(
+				typeof(CodeUtilities_Patches),
+				nameof(CodeUtilities_Patches.ParseGroupToColor)
+			)
+		);
+
+		_harmony.PatchAll(typeof(Localizer_Patches));
+	}
+
+	private void Unpatch()
+	{
+		if (_harmony == null) return;
+
+		_harmony.UnpatchSelf();
+		_harmony = null;
+	}
+
+	#endregion
 }
